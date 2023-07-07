@@ -1,0 +1,16 @@
+- fail: msg='deprecated'
+# - block:
+#   - name: Ensure `virtualenv_home` exists
+#     shell: >-
+#       ls {{virtualenv_home}} || mkdir -p {{virtualenv_home}}
+#   - name: List virtualenvs
+#     shell: >-
+#       ls {{virtualenv_home}}
+#     register: tmp_venv_out
+#   become: yes
+#   become_user: "{{virtualenv_user}}"
+#
+# - name: Store `venv_out.venv_names`
+#   set_fact:
+#     venv_out:
+#       venv_names: "{{tmp_venv_out.stdout_lines}}"

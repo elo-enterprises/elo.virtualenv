@@ -1,0 +1,11 @@
+- fail: msg='deprecated'
+# - name: Describe `venv_requirements_file`
+#   debug: var=venv_requirements_file
+#
+# - name: Confirm reqs file exists
+#   shell: "ls {{venv_requirements_file}}"
+#
+# - name: Dispatch
+#   import_tasks: cmd.yml
+#   vars:
+#     wrapper_cmd: >-

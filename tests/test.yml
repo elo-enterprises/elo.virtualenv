@@ -1,0 +1,41 @@
+- hosts: localhost
+  remote_user: root
+  gather_facts: yes
+  vars:
+    ansible_user: "{{lookup('env', 'USER')}}"
+    venv_name: elo.virtualenv.test
+  roles:
+    - elo.virtualenv
+  tasks:
+
+    ## Real start
+    # - import_role:
+    #     name: elo.virtualenv
+    #     tasks_from: destroy.yml
+    # - debug: var=venv_out
+    # - import_role:
+    #     name: elo.virtualenv
+    #     tasks_from: get-or-create.yml
+    # - debug: var=venv_out
+    # - name: Assert
+    #   fail: msg="Destroy should have removed venv"
+    #   when: venv_out.cached
+    #
+    # - import_role:
+    #     name: elo.virtualenv
+    #     tasks_from: destroy.yml
+    # - import_role:
+    #     name: elo.virtualenv
+    #     tasks_from: get-or-create.yml
+    # - import_role:
+    #     name: elo.virtualenv
+    #     tasks_from: get-or-create.yml
+    # - name: Test Cache
+    #   fail: msg="Destroy should have removed venv"
+    #   when: not venv_out.cached
+
+    - name: Test `stat`
+      import_role:
+        name: elo.virtualenv
+        tasks_from: stat.yml
+    - debug: var=venv_out

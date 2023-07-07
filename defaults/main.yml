@@ -1,0 +1,7 @@
+---
+# defaults file for elo.virtualenv
+virtualenv_user: "{{ansible_user}}"
+# virtualenvwrapper_python: "{{ansible_python_interpreter}}"
+# virtualenvwrapper_virtualenv: virtualenv
+# virtualenvwrapper_script: "/usr/local/bin/virtualenvwrapper.sh"
+virtualenv_home: "~{{virtualenv_user}}/.venvs"

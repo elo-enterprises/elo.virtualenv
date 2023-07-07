@@ -1,0 +1,39 @@
+#
+# - name: Describe context
+#   debug:
+#     msg: >-
+#       virtualenv_user: "{{virtualenv_user}}"
+#       virtualenvwrapper_python: "{{virtualenvwrapper_python}}"
+#       virtualenvwrapper_virtualenv: "{{virtualenvwrapper_virtualenv}}"
+
+- name: Deriving cmd (part 1)
+  set_fact:
+    tmp_preamble: >-
+      source {{virtualenv_home}}/{{venv.name}}/bin/activate
+
+- name: Deriving cmd (part 2)
+  set_fact:
+    tmp_cmd: >-
+      bash -c "{{tmp_preamble}} && {{wrapper_cmd}}"
+
+- name: Describe command
+  debug: var=tmp_cmd
+
+- name: Exec command
+  shell: "{{tmp_cmd}}"
+  register: tmp_venv_out
+  become: yes
+  become_user: "{{virtualenv_user}}"
+  args:
+    executable: /bin/bash # sh does not support `source`
+
+- name: Export `venv_out`
+  set_fact:
+    venv_out:
+      user: "{{virtualenv_user}}"
+      name: "{{venv.name}}"
+      # virtualenvwrapper_python: "{{virtualenvwrapper_python}}"
+      # virtualenv: "{{virtualenvwrapper_virtualenv}}"
+      stdout: "{{tmp_venv_out.stdout}}"
+      stdout_lines: "{{tmp_venv_out.stdout_lines}}"
+      stderr: "{{tmp_venv_out.stdout}}"

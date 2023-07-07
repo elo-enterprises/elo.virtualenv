@@ -1,0 +1,87 @@
+- debug: msg="elo.virtualenv::stat"
+- block:
+  - shell: "ls {{virtualenv_home}}/{{venv.name}}"
+
+  - set_fact:
+      venv_out:
+        exists: yes
+        name: "{{venv.name}}"
+        home: "{{virtualenv_home}}/{{venv.name}}"
+        path: "{{virtualenv_home}}/{{venv.name}}"
+  - shell: 'echo {{virtualenv_home}}/{{venv.name}}'
+    register: tmp_out
+  - set_fact:
+      venv_out: "{{venv_out | combine({'abspath': tmp_out.stdout})}}"
+  rescue:
+    - set_fact:
+        venv_out:
+          exists: no
+          name: "{{venv.name}}"
+
+- block:
+    - name: Inspect env
+      shell: >-
+        bash -c "source {{virtualenv_home}}/{{venv.name}}/bin/activate
+        && env
+        | egrep 'VIRT|PYTH'"
+      register: tmp_out
+    - set_fact:
+        venv_out: "{{venv_out|combine({'env':tmp_out.stdout.strip()})}}"
+    - name: Inspect python version
+      shell: >-
+        {{virtualenv_home}}/{{venv.name}}/bin/python --version
+      register: tmp_out
+    - set_fact:
+        venv_out: "{{venv_out|combine({'python':{'path':virtualenv_home+'/'+venv.name+'/bin/python', 'version':tmp_out.stdout.strip()}})}}"
+    - name: Inspect pip version
+      shell: >-
+        {{virtualenv_home}}/{{venv.name}}/bin/pip --version
+      register: tmp_out
+    - set_fact:
+        venv_out: "{{venv_out|combine({'pip': {'version':tmp_out.stdout.strip()}})}}"
+  when:
+    - venv_out.exists
+
+- name: Describe venv status
+  debug: var=venv_out
+# - name: Assert venv exists (1 of 2)
+#   import_tasks: list.yml
+#
+# - name: Assert venv exists (2 of 2)
+#   fail:
+#     msg: >-
+#       Venv named `{{venv_name}}` does not exist in list: {{venv_out.venv_names}}"
+#   when:  venv_name not in venv_out.venv_names
+#
+# - name: Extract venv details
+#   import_tasks: "run.yml"
+#   vars:
+#     venv_cmd:  "env | grep VIRTUAL_ENV="
+#
+# - set_fact:
+#     venv_root: "{{venv_out.stdout.strip().split('=')[1]}}"
+# - set_fact:
+#     venv_bin: "{{venv_root}}/bin"
+#
+# - set_fact:
+#     venv_python: "{{venv_bin}}/python"
+#     venv_pip: "{{venv_bin}}/pip"
+#
+# - shell: '{{venv_python}} --version'
+#   register: tmp_out
+# - set_fact:
+#     venv_python_version: "{{tmp_out.stdout.strip()}}"
+# - shell: "{{venv_pip}} --version"
+#   register: tmp_out
+# - set_fact:
+#     venv_pip_version: "{{tmp_out.stdout.strip()}}"
+#
+# - name: Export `venv_out`
+#   set_fact:
+#     venv_out:
+#       venv_bin: "{{venv_bin}}"
+#       venv_root: "{{venv_root}}"
+#       venv_python: "{{venv_python}}"
+#       venv_pip: "{{venv_pip}}"
+#       venv_pip_version: "{{venv_pip_version}}"
+#       venv_python_version: "{{venv_python_version}}"

@@ -1,0 +1,6 @@
+---
+# tasks file for elo.virtualenv
+- block:
+  - import_tasks: _main.yml
+  become: yes
+  become_user: "{{virtualenv_user}}"

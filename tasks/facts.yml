@@ -1,0 +1,10 @@
+- block:
+  - name: Assert `virtualenv` tool is present
+    shell: which virtualenv
+  - set_fact:
+      virtualenv_exec: virtualenv
+  rescue:
+    - name: Assert `virtualenv` module is present
+      shell: python3 -mvirtualenv --help
+    - set_fact:
+        virtualenv_exec: python3 -mvirtualenv

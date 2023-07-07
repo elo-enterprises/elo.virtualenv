@@ -1,0 +1,23 @@
+- fail: msg='deprecated'
+#
+# # NB: publishes `venv_names`
+# - import_tasks: list.yml
+# - set_fact:
+#     tmp_names: "{{venv_out.venv_names}}"
+#
+# - block:
+#   - name: Pull details from new venv
+#     import_tasks: stat.yml
+#   - name: Export `venv_out`
+#     set_fact:
+#       venv_out: '{{venv_out | combine({"cached":"no"})}}'
+#   - debug: var=venv_out
+#   when: venv_name not in tmp_names
+#
+# # - block:
+# #     - name: Pull details from old venv
+# #       import_tasks: stat.yml
+# #     - name: Export `venv_out`
+# #       set_fact:
+# #         venv_out: '{{venv_out | combine({"cached":"yes"})}}'
+# #   when: venv_name in tmp_names
