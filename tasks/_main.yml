@@ -1,9 +1,10 @@
 ##
-#
+# elo.virtualenv::main
 ##
 - block:
   - debug: msg="elo.virtualenv::main"
-  - name: Ensure virtualenv related packages are installed
+
+  - name: Ensure virtualenv related packages are installed (Linux)
     apt:
       name: "{{item}}"
       state: present
@@ -11,6 +12,15 @@
     become_user: root
     with_items:
       - python3-virtualenv
+    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  
+  - name: Ensure virtualenv related packages are installed (OSX)
+    shell: "python3 -mpip install {{item}}"
+    become: yes
+    become_user: root
+    with_items:
+      - virtualenv
+    when: ansible_distribution == 'MacOSX' 
 
   - import_tasks: facts.yml
 
@@ -85,56 +95,12 @@
     - venv is defined and venv.get('name')
     - (tmp_venv_created is defined and tmp_venv_created) or venv.get('return_stats')
 
-# - name: Ensure python-dev is available (py2)
-#   apt:
-#     name: python-dev
-#     state: present
-#   when:
-#     - agent_venv_python is defined
-#     - agent_venv_python.startswith('python2')
+- name: Check if virtualenvwrapper is available
+  register: found_virtualenvwrapper_script
+  ignore_errors: true
+  shell: "ls {{virtualenvwrapper_script}}"
 
-# - name: Install virtualenvwrapper
-#   shell: "{{item}}"
-#   with_items:
-#     - "{{virtualenvwrapper_python}} -m pip install virtualenvwrapper"
-#     - "{{virtualenvwrapper_python}} -m pip install virtualenv"
-#   become: yes
-#   become_user: "root"
-
-# - name: Install virtualenvwrapper
-#   shell: "{{item}}"
-#   with_items:
-#     - "{{virtualenvwrapper_python}} -m pip install virtualenvwrapper"
-#     - "{{virtualenvwrapper_python}} -m pip install virtualenv"
-#   become: yes
-#   become_user: "{{virtualenv_user}}"
-
-# - block:
-#   - name: Assert virtualenvwrapper is available
-#     shell: "ls {{virtualenvwrapper_script}}"
-#     register: found_virtualenv
-#   rescue:
-#     # hmm, ubuntu 20 only maybe?
-#     - block:
-#       - name: Copy from /usr/share
-#         shell: >-
-#           cp /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-#           {{virtualenvwrapper_script|dirname}}
-#       rescue:
-#         - name: Install virtualenvwrapper
-#           shell: pip3 install virtualenvwrapper
-#
-# - name: Update bashrc for virtualenvwrapper
-#   become: yes
-#   become_user: "{{virtualenv_user}}"
-#   lineinfile:
-#     dest: "~{{virtualenv_user}}/.bash_profile"
-#     create: yes
-#     insertafter: EOF
-#     regexp: "{{ item.regexp }}"
-#     line: "{{ item.line }}"
-#   with_items:
-#     # - { line: 'export WORKON_HOME=$HOME/.environments', regexp: '^export WORKON_HOME' }
-#     # - { line: 'export PIP_VIRTUALENV_BASE=$WORKON_HOME', regexp: '^export PIP_VIRTUALENV_BASE='}
-#     - { line: 'export VIRTUALENVWRAPPER_ENV_BIN_DIR=bin', regexp: '^export VIRTUALENVWRAPPER_ENV_BIN_DIR=bin'}
-#     - { line: 'source /usr/local/bin/virtualenvwrapper.sh', regexp: '^source /usr/local/bin/virtualenvwrapper.sh'}
+- import_tasks: install-virtualenvwrapper.yml
+  when: 
+    - found_virtualenvwrapper_script is failed
+  

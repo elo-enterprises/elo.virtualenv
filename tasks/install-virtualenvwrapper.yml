@@ -1,0 +1,41 @@
+- name: Install virtualenvwrapper (global)
+  shell: "{{item}}"
+  with_items:
+    - "{{virtualenvwrapper_python}} -m pip install virtualenvwrapper"
+    - "{{virtualenvwrapper_python}} -m pip install virtualenv"
+  become: yes
+  become_user: "root"
+
+- name: Install virtualenvwrapper (local)
+  shell: "{{item}}"
+  with_items:
+    - "{{virtualenvwrapper_python}} -m pip install virtualenvwrapper"
+    - "{{virtualenvwrapper_python}} -m pip install virtualenv"
+  become: yes
+  become_user: "{{virtualenv_user}}"
+
+- name: Assert virtualenvwrapper is available
+  register: found_virtualenvwrapper_script
+  ignore_errors: true
+  shell: "ls {{virtualenvwrapper_script}}"
+
+- fail:
+    msg="{{virtualenvwrapper_script}} is missing!"
+  when: 
+  - found_virtualenvwrapper_script is failed
+
+- name: Update .bash_profile for virtualenvwrapper
+  become: yes
+  become_user: "{{virtualenv_user}}"
+  blockinfile:
+    create: yes 
+    marker: "# {mark}  elo.virtualenv@install-virtualenvwrapper.yml {{item|default('')}}"
+    block: |
+      # see also: https://virtualenvwrapper.readthedocs.io/en/latest/
+      export VIRTUALENVWRAPPER_ENV_BIN_DIR=bin
+      export VIRTUALENVWRAPPER_PYTHON={{virtualenvwrapper_python}}
+      source /usr/local/bin/virtualenvwrapper.sh
+    path: "~{{virtualenv_user}}/.bash_profile"
+  become: no
+  with_items: 
+    - "~{{virtualenv_user}}/.bash_profile"
