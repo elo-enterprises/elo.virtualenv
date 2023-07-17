@@ -1,0 +1,49 @@
+##
+# Requirements file for ansible-galaxy.
+#
+# Example usage:
+#  # From github/ssh
+#  roles:
+#   - name: org.role_name 
+#     scm: git
+#     force: true
+#     version: some_branch_or_hash
+#     src: git@github.com:org/role-name.git
+#     force: true
+#
+#  # From github/http
+#  roles:
+#   - name: org.role_name 
+#     scm: git
+#     force: true
+#     version: some_branch_or_hash
+#     src: git@github.com:org/role-name.git
+#
+#  # From ansible-galaxy's global repo
+#  roles:
+#   - name: org.role_name 
+#     force: true
+#     src: org.role_name
+#  
+#  NB: Installing collections with ansible-galaxy is only supported in ansible 2.9+
+#  collections:
+#    - name: org.col_name
+#      src: org.col_name
+#      version: 2.1.1
+##
+
+roles:
+  - name: elo.common 
+    scm: git
+    force: true
+    version: osx
+    # src: git@github.com:elo-enterprises/elo.common.git
+    src: https://github.com/elo-enterprises/elo.common
+
+  - name: elo.virtualenv 
+    scm: git
+    force: true
+    version: osx
+    # src: git@github.com:elo-enterprises/elo.virtualenv.git
+    src: https://github.com/elo-enterprises/elo.virtualenv
+

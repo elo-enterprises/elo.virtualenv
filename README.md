@@ -4,7 +4,7 @@ An ansible role that helps to setup python virtualenv's.
 
 # Requirements / Dependencies
 
-See [requirements.yml](requirements.yml)
+See [requirements.yml](examples/requirements.yml) and [requirements.txt](examples/requirements.txt)
 
 # Role Variables
 
@@ -21,7 +21,7 @@ Including an example of how to use your role (for instance, with variables passe
 ```
     - hosts: servers
       roles:
-         - { role: elo.virtualenv, x: 42 }
+
 ```
 
 ## License
