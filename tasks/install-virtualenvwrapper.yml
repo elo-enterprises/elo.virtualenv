@@ -25,7 +25,6 @@
   - found_virtualenvwrapper_script is failed
 
 - name: Update .bash_profile for virtualenvwrapper
-  become: yes
   become_user: "{{virtualenv_user}}"
   blockinfile:
     create: yes 
